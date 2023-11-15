@@ -6,14 +6,20 @@ import ssl
 
 class AWSRabbitMQClient:
     def __init__(self, url):
+        self.connection = None
+        self.channel = None
+        self.url = url
         # SSL Context for TLS configuration of Amazon MQ for RabbitMQ
+        self.setup_connection()
+
+    def setup_connection(self):
         ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
         ssl_context.set_ciphers('ECDHE+AESGCM:!ECDSA')
 
-        parameters = pika.URLParameters(url)
+        parameters = pika.URLParameters(self.url)
         parameters.ssl_options = pika.SSLOptions(context=ssl_context)
-        parameters.heartbeat = 0
-
+        parameters.heartbeat = 30
+        parameters.blocked_connection_timeout = 60
         self.connection = pika.BlockingConnection(parameters)
         self.channel = self.connection.channel()
 
@@ -22,8 +28,13 @@ class AWSRabbitMQClient:
         self.channel.queue_declare(queue=queue_name)
 
     def send_message(self, exchange, routing_key, body):
-        self.connection.process_data_events()
-        channel = self.connection.channel()
+        # TODO: remove try/except after adding mq heartbeat
+        try:
+            channel = self.connection.channel()
+        except:
+            self.setup_connection()
+            channel = self.connection.channel()
+
         channel.basic_publish(exchange=exchange,
                               routing_key=routing_key,
                               body=body)

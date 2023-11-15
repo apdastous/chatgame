@@ -44,7 +44,7 @@ def process(ch, method, properties, body):
     if message.lower() in MESSAGE_TO_INPUT_MAP['buttons']:
         gamepad.press_button(button=MESSAGE_TO_INPUT_MAP['buttons'][message])
         gamepad.update()
-        sleep(.5)
+        sleep(.2)
         gamepad.release_button(button=MESSAGE_TO_INPUT_MAP['buttons'][message])
         gamepad.update()
         print(f"Pressed and released {MESSAGE_TO_INPUT_MAP['buttons'][message]}")

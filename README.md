@@ -10,6 +10,12 @@
 # TODO
 * Threaded rabbitmq client
   * send proper heartbeats
+  * aiopika?
 * Multi-button inputs
 * Dpad vs thumbstick
 * Button hold duration
+* Twitch chat schema for gamepad inputs
+* Threaded (per button?) gamepad inputs
+* Project structure
+  * separate into feeders/runners
+  * startup/teardown scripts
