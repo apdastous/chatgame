@@ -26,7 +26,7 @@ class ButtonProcessor(GamepadProcessor):
 
     def press_and_release_button(self, modifier):
         if not modifier:
-            modifier = .02
+            modifier = .05
 
         self.gamepad.press_button(button=self.button)
         self.gamepad.update()
@@ -62,6 +62,7 @@ class DpadManager(GamepadProcessor):
                     self.press_and_release_dpad(direction, modifier)
                     dpad_queue.task_done()
                 except queue.Empty:
+                    sleep(.05)  # todo: this lowers cpu temp by 30c!!!
                     pass
 
     def press_and_release_dpad(self, direction, modifier):
@@ -71,11 +72,11 @@ class DpadManager(GamepadProcessor):
         for i in range(int(modifier)):
             self.gamepad.directional_pad(direction=self.input_to_direction_map[direction])
             self.gamepad.update()
-            sleep(.02)
+            sleep(.03)
 
             self.gamepad.directional_pad(direction=vg.DS4_DPAD_DIRECTIONS.DS4_BUTTON_DPAD_NONE)
             self.gamepad.update()
-            sleep(.02)
+            sleep(.03)
 
         print(f"Pressed and released dpad {direction} x{modifier}")
 
@@ -99,12 +100,13 @@ class ThumbstickManager(GamepadProcessor):
 
     def run(self):
         while True:
-            for direction, dpad_queue in self.input_to_queue_map.items():
+            for direction, thumbstick_queue in self.input_to_queue_map.items():
                 try:
-                    duration = dpad_queue.get(block=False)
+                    duration = thumbstick_queue.get(block=False)
                     self.move_and_release_thumbstick(self.thumbstick, self.input_to_coordinates_map[direction], duration)
-                    dpad_queue.task_done()
+                    thumbstick_queue.task_done()
                 except queue.Empty:
+                    sleep(.05) # todo: same lol
                     pass
 
 
@@ -247,6 +249,8 @@ class DualShockController(object):
             processor.start()
 
     def enqueue_input(self, input, modifier):
+        if modifier and int(modifier) > 11:
+            modifier = 10
         if input in self.input_to_queue_map.keys():
             self.input_to_queue_map[input].put(modifier)
         else:
