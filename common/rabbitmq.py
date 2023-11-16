@@ -1,10 +1,11 @@
 # Various bits taken from https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/amazon-mq-rabbitmq-pika.html
 
-import pika
 import ssl
 
+import pika
 
-class AWSRabbitMQClient:
+
+class AWSRabbitMQClient(object):
     def __init__(self, url):
         self.connection = None
         self.channel = None

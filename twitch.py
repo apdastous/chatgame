@@ -3,7 +3,7 @@
 import re
 import socket
 
-from rabbitmq import AWSRabbitMQClient
+from common.rabbitmq import AWSRabbitMQClient
 import settings
 
 
