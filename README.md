@@ -34,6 +34,7 @@
 * tlright
 
 **Modifiers**
+
 To hold circle button for three seconds:
 * circle:3
 
