@@ -6,7 +6,7 @@ if __name__ == '__main__':
     r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     previous = None
     while True:
-        latest = r.zrevrange('latest_commands', 0, 19)
+        latest = r.zrevrange('latest_commands', 0, 24)
         if latest != previous:
             with open("latest_commands.txt", "w") as scratch_file:
                 for action in latest:

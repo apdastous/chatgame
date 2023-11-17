@@ -183,6 +183,10 @@ class DualShockController(object):
             'cross': self.cross_queue,
             'circle': self.circle_queue,
             'square': self.square_queue,
+            't': self.triangle_queue,
+            'x': self.cross_queue,
+            'o': self.circle_queue,
+            's': self.square_queue,
             'l1': self.l1_queue,
             'l2': self.l2_queue,
             'r1': self.r1_queue,
@@ -290,6 +294,166 @@ class DualShockController(object):
             self.l2_processor,
             self.r1_processor,
             self.r2_processor,
+            self.dpad_processor,
+            self.left_thumbstick_processor
+        ]
+
+        super().__init__()
+
+    def listen(self):
+        for processor in self.processors:
+            processor.start()
+
+    def enqueue_input(self, input, modifier, username):
+        try:
+            if modifier and int(modifier) > 11:
+                modifier = 10
+        except:
+            return
+
+        self.input_to_queue_map[input].put(username + '#' + str(modifier))
+
+
+class SwitchController(object):
+    def __init__(self):
+        self.gamepad = vg.VDS4Gamepad()
+
+        self.select_queue = queue.Queue()
+        self.start_queue = queue.Queue()
+
+        self.x_queue = queue.Queue()
+        self.a_queue = queue.Queue()
+        self.b_queue = queue.Queue()
+        self.y_queue = queue.Queue()
+        self.l_queue = queue.Queue()
+        self.zl_queue = queue.Queue()
+        self.r_queue = queue.Queue()
+        self.zr_queue = queue.Queue()
+
+        self.dpad_up_queue = queue.Queue()
+        self.dpad_down_queue = queue.Queue()
+        self.dpad_left_queue = queue.Queue()
+        self.dpad_right_queue = queue.Queue()
+
+        self.thumbleft_up_queue = queue.Queue()
+        self.thumbleft_down_queue = queue.Queue()
+        self.thumbleft_left_queue = queue.Queue()
+        self.thumbleft_right_queue = queue.Queue()
+
+        self.input_to_queue_map = {
+            'select': self.select_queue,
+            'start': self.start_queue,
+            'x': self.x_queue,
+            'b': self.b_queue,
+            'a': self.a_queue,
+            'y': self.y_queue,
+            'l': self.l_queue,
+            'zl': self.zl_queue,
+            'r': self.r_queue,
+            'zr': self.zr_queue,
+            'dup': self.dpad_up_queue,
+            'ddown': self.dpad_down_queue,
+            'dleft': self.dpad_left_queue,
+            'dright': self.dpad_right_queue,
+            'tlup': self.thumbleft_up_queue,
+            'tldown': self.thumbleft_down_queue,
+            'tlleft': self.thumbleft_left_queue,
+            'tlright': self.thumbleft_right_queue,
+        }
+
+        self.select_processor = ButtonManager(
+            gamepad=self.gamepad,
+            display_name='select',
+            queue=self.select_queue,
+            button=vg.DS4_BUTTONS.DS4_BUTTON_SHARE
+        )
+
+        self.start_processor = ButtonManager(
+            gamepad=self.gamepad,
+            display_name='start',
+            queue=self.start_queue,
+            button=vg.DS4_BUTTONS.DS4_BUTTON_OPTIONS
+        )
+
+        self.triangle_processor = ButtonManager(
+            gamepad=self.gamepad,
+            display_name='x',
+            queue=self.x_queue,
+            button=vg.DS4_BUTTONS.DS4_BUTTON_TRIANGLE
+        )
+        self.circle_processor = ButtonManager(
+            gamepad=self.gamepad,
+            display_name='a',
+            queue=self.a_queue,
+            button=vg.DS4_BUTTONS.DS4_BUTTON_CIRCLE
+        )
+        self.cross_processor = ButtonManager(
+            gamepad=self.gamepad,
+            display_name='b',
+            queue=self.b_queue,
+            button=vg.DS4_BUTTONS.DS4_BUTTON_CROSS
+        )
+        self.square_processor = ButtonManager(
+            gamepad=self.gamepad,
+            display_name='y',
+            queue=self.y_queue,
+            button=vg.DS4_BUTTONS.DS4_BUTTON_SQUARE
+        )
+        self.l_processor = ButtonManager(
+            gamepad=self.gamepad,
+            display_name='l',
+            queue=self.l_queue,
+            button=vg.DS4_BUTTONS.DS4_BUTTON_SHOULDER_LEFT
+        )
+        self.zl_processor = ButtonManager(
+            gamepad=self.gamepad,
+            display_name='zl',
+            queue=self.zl_queue,
+            button=vg.DS4_BUTTONS.DS4_BUTTON_TRIGGER_LEFT
+        )
+        self.r_processor = ButtonManager(
+            gamepad=self.gamepad,
+            display_name='r',
+            queue=self.r_queue,
+            button=vg.DS4_BUTTONS.DS4_BUTTON_SHOULDER_RIGHT
+        )
+        self.zr_processor = ButtonManager(
+            gamepad=self.gamepad,
+            display_name='zr',
+            queue=self.zr_queue,
+            button=vg.DS4_BUTTONS.DS4_BUTTON_TRIGGER_RIGHT
+        )
+
+        self.dpad_processor = DpadManager(
+            gamepad=self.gamepad,
+            display_name='dpad',
+            up_queue=self.dpad_up_queue,
+            down_queue=self.dpad_down_queue,
+            left_queue=self.dpad_left_queue,
+            right_queue=self.dpad_right_queue
+        )
+
+        self.left_thumbstick_processor = ThumbstickManager(
+            gamepad=self.gamepad,
+            display_name='left thumbstick',
+            up_queue=self.thumbleft_up_queue,
+            down_queue=self.thumbleft_down_queue,
+            left_queue=self.thumbleft_left_queue,
+            right_queue=self.thumbleft_right_queue,
+            thumbstick='left'
+        )
+
+        self.processors = [
+            self.select_processor,
+            self.start_processor,
+            self.triangle_processor,
+            self.circle_processor,
+            self.cross_processor,
+            self.square_processor,
+            self.l_processor,
+            self.zl_processor,
+            self.r_processor,
+            self.zr_processor,
             self.dpad_processor,
             self.left_thumbstick_processor
         ]
