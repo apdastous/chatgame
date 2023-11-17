@@ -33,4 +33,4 @@ while True:
             message = message.strip()
 
             print(f"Channel: {channel} \nUsername: {username} \nMessage: {message}")
-            rabbit.send_message(exchange="", routing_key=settings.TWITCH_AMQP_QUEUE, body=bytes(message, 'utf-8'))
+            rabbit.send_message(exchange="", routing_key=settings.TWITCH_AMQP_QUEUE, body=bytes(username + '#' + message, 'utf-8'))

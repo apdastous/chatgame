@@ -1,11 +1,13 @@
-import settings
 from common.gamepad import DualShockController
 from common.rabbitmq import AWSRabbitMQClient
+import settings
 
 
 def process(ch, method, properties, body):
-    message = body.decode().lower()
-    print(f"Received decoded body: {message}")
+    decoded_body = body.decode()
+    username = decoded_body.split('#')[0]
+    message = decoded_body.split('#')[-1].lower()
+    print(f"Received decoded body: {decoded_body}")
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
     if ':' in message:
@@ -18,7 +20,10 @@ def process(ch, method, properties, body):
         input = message
         modifier = None
 
-    gamepad.enqueue_input(input, modifier)
+    if input in gamepad.input_to_queue_map.keys():
+        gamepad.enqueue_input(input, modifier, username)
+    else:
+        print(f'{username}: No idea what to do with: {message}')
 
 
 gamepad = DualShockController()
