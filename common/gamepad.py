@@ -35,7 +35,7 @@ class ButtonManager(BaseGamepadManager):
     def press_and_release_button(self, message):
         username = message.split('#')[0]
         modifier = message.split('#')[-1]
-        if modifier == 'None':
+        if not modifier or modifier == 'None':
             modifier = .05
 
         self.log_action(username, self.display_name, modifier)
@@ -80,7 +80,7 @@ class DpadManager(BaseGamepadManager):
     def press_and_release_dpad(self, direction, message):
         username = message.split('#')[0]
         modifier = message.split('#')[-1]
-        if modifier == 'None':
+        if not modifier or modifier == 'None':
             modifier = 1
 
         for i in range(int(modifier)):
@@ -134,7 +134,7 @@ class ThumbstickManager(BaseGamepadManager):
             self.gamepad.right_joystick_float(x_value_float=coordinates[0], y_value_float=coordinates[1])
         self.gamepad.update()
 
-        if modifier == 'None':
+        if not modifier or modifier == 'None':
             modifier = .5
 
         direction = self.coordinates_to_input_map[coordinates]
