@@ -1,5 +1,6 @@
 # HOWTO
 * Set up rabbitmq
+* Set up redis on the same host as duckstation.py
 * Create settings.py and add the following:
   * AMQP_URL
   * TWITCH_NICKNAME
